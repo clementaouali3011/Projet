@@ -403,7 +403,7 @@ int compareCityNamesCaseInsensitive(const void *a, const void *b) {
 }
 
 void saveResultsToFile(const char *filename, const CityStats *topCities, int topCitiesCount) {
-    FILE *file = fopen(filename, "w");
+    FILE *file = fopen(filename, "wb");
     if (file == NULL) {
         fprintf(stderr, "Impossible d'ouvrir le fichier de sauvegarde.\n");
         exit(EXIT_FAILURE);
@@ -443,7 +443,7 @@ int main() {
     qsort(topCities, topCitiesCount, sizeof(CityStats), compareCityNamesCaseInsensitive);
     // Affichage du résultat
     printTopCities(topCities,topCitiesCount);
-    saveResultsToFile("temp/data_t.txt", topCities, topCitiesCount);
+    saveResultsToFile("temp/data_t.dat", topCities, topCitiesCount);
     // Fermer le fichier
     fclose(fichier);
     
