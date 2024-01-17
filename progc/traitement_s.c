@@ -322,7 +322,7 @@ void freeAVLTree(AVLNode **root) {
 }
 
 void saveResultsToFile(const char *filename, const CityStats *topEcartsDistances, int topEcartsDistancesCount) {
-    FILE *file = fopen(filename, "w");
+    FILE *file = fopen(filename, "wb");
     if (file == NULL) {
         fprintf(stderr, "Impossible d'ouvrir le fichier de sauvegarde pour l'écriture.\n");
         perror("Error");
@@ -368,7 +368,7 @@ int main() {
 
      // Fermer le fichier
     fclose(fichier);
-    saveResultsToFile("temp/data_s.txt", topEcartsDistances, topEcartsDistancesCount);
+    saveResultsToFile("temp/data_s.dat", topEcartsDistances, topEcartsDistancesCount);
     
     
     // Libérer la mémoire de l'arbre AVL des départs
