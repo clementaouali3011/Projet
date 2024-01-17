@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#Déplacement des images précédentes dans le dossier demo
 mv images/*.png demo/
 
 # Vérifier et créer le dossier "temp" s'il n'existe pas
@@ -14,7 +15,7 @@ fi
 if [ ! -d "images" ]; then
     mkdir images
 else
-	# Vider le dossier "temp" s'il existe
+	# Vider le dossier "images" s'il existe
     	rm -rf images/*
 fi
 
