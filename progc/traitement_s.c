@@ -16,21 +16,21 @@ typedef struct {
     double DistanceMin;
     double DistanceMax;
     double DistanceMoy;
-} CityStats;
+} StatsVille;
 
 // Structure pour les nœuds de l'AVL
-typedef struct AVLNode {
-    CityStats data;
-    struct AVLNode *left;
-    struct AVLNode *right;
-    int height;
-} AVLNode;
+typedef struct NoeudAVL {
+    StatsVille stats;
+    struct NoeudAVL *gauche;
+    struct NoeudAVL *droite;
+    int taille;
+} NoeudAVL;
 
 
 // Fonction pour calculer la hauteur d'un nœud
-int height(AVLNode *node) {
-    if (node == NULL) return 0;
-    return node->height;
+int taille(NoeudAVL *noeud) {
+    if (noeud == NULL) return 0;
+    return noeud->taille;
 }
 
 // Fonction pour obtenir le maximum de deux nombres
@@ -39,40 +39,40 @@ int max(int a, int b) {
 }
 
 // Fonction pour effectuer une rotation à droite
-AVLNode *rotateRight(AVLNode *y) {
-    if (y == NULL || y->left == NULL) {
+NoeudAVL *rotationdroite(NoeudAVL *y) {
+    if (y == NULL || y->gauche == NULL) {
         return y;  // Rien à faire s'il n'y a pas de sous-arbre droit
     }
-    AVLNode *x = y->left;
-    AVLNode *T2 = x->right;
+    NoeudAVL *x = y->gauche;
+    NoeudAVL *T2 = x->droite;
 
     // Effectuer la rotation
-    x->right = y;
-    y->left = T2;
+    x->droite = y;
+    y->gauche = T2;
 
     // Mettre à jour les hauteurs
-    y->height = max(height(y->left), height(y->right)) + 1;
-    x->height = max(height(x->left), height(x->right)) + 1;
+    y->taille = max(taille(y->gauche), taille(y->droite)) + 1;
+    x->taille = max(taille(x->gauche), taille(x->droite)) + 1;
 
     // Retourner le nouveau nœud racine
     return x;
 }
 
 // Fonction pour effectuer une rotation à gauche
-AVLNode *rotateLeft(AVLNode *x) {
-    if (x == NULL || x->right == NULL) {
+NoeudAVL *rotationgauche(NoeudAVL *x) {
+    if (x == NULL || x->droite == NULL) {
         return x;  // Rien à faire s'il n'y a pas de sous-arbre droit
     }
-    AVLNode *y = x->right;
-    AVLNode *T2 = y->left;
+    NoeudAVL *y = x->droite;
+    NoeudAVL *T2 = y->gauche;
 
     // Effectuer la rotation
-    y->left = x;
-    x->right = T2;
+    y->gauche = x;
+    x->droite = T2;
 
     // Mettre à jour les hauteurs
-    x->height = max(height(x->left), height(x->right)) + 1;
-    y->height = max(height(y->left), height(y->right)) + 1;
+    x->taille = max(taille(x->gauche), taille(x->droite)) + 1;
+    y->taille = max(taille(y->gauche), taille(y->droite)) + 1;
 
     // Retourner le nouveau nœud racine
     return y;
@@ -81,163 +81,163 @@ AVLNode *rotateLeft(AVLNode *x) {
 
 
 // Fonction pour obtenir le facteur d'équilibre d'un nœud
-int getBalance(AVLNode *node) {
-    if (node == NULL) return 0;
-    return height(node->left) - height(node->right);
+int Equilibre(NoeudAVL *noeud) {
+    if (noeud == NULL) return 0;
+    return taille(noeud->gauche) - taille(noeud->droite);
 }
 
 
 //fonction qui assigne la valeur maximum du tab Distances à la variable DistanceMax
-void MajDistanceMAX (AVLNode *root){
-    if (root == NULL) {
+void MajDistanceMAX (NoeudAVL *noeud){
+    if (noeud == NULL) {
         return;  // Cas de base : nœud NULL
     }
-    root->data.DistanceMax = root->data.Distances[root->data.tailleTabDistances - 1];  // Utiliser la dernière valeur
+    noeud->stats.DistanceMax = noeud->stats.Distances[noeud->stats.tailleTabDistances - 1];  // Utiliser la dernière valeur
 
-    for (int i=0;i<root->data.tailleTabDistances; i++){
-        if (root->data.Distances[i]>root->data.DistanceMax){
-            root->data.DistanceMax = root->data.Distances[i];
+    for (int i=0;i<noeud->stats.tailleTabDistances; i++){
+        if (noeud->stats.Distances[i]>noeud->stats.DistanceMax){
+            noeud->stats.DistanceMax = noeud->stats.Distances[i];
         }
     }
 }    
 
 //fonction qui assigne la valeur minimum du tab Distances à la variable DistanceMin
-void MajDistanceMIN (AVLNode *root){
-    if (root == NULL) {
+void MajDistanceMIN (NoeudAVL *noeud){
+    if (noeud == NULL) {
         return;  // Cas de base : nœud NULL
     }
-    root->data.DistanceMin = root->data.Distances[root->data.tailleTabDistances - 1];  // Utiliser la dernière valeur
+    noeud->stats.DistanceMin = noeud->stats.Distances[noeud->stats.tailleTabDistances - 1];  // Utiliser la dernière valeur
 
-    for (int i=0;i < root->data.tailleTabDistances; i++){
-        if (root->data.Distances[i]<root->data.DistanceMin){
-            root->data.DistanceMin = root->data.Distances[i];
+    for (int i=0;i < noeud->stats.tailleTabDistances; i++){
+        if (noeud->stats.Distances[i]<noeud->stats.DistanceMin){
+            noeud->stats.DistanceMin = noeud->stats.Distances[i];
         }
     }    
 }
 
 
 
-void MajDistanceMOY (AVLNode *root){
-    if (root == NULL) {
+void MajDistanceMOY (NoeudAVL *noeud){
+    if (noeud == NULL) {
         return;  // Cas de base : nœud NULL
     }
 
-    if (root->data.tailleTabDistances == 0) {
-        root->data.DistanceMoy = 0;  // Cas de base : tableau vide
+    if (noeud->stats.tailleTabDistances == 0) {
+        noeud->stats.DistanceMoy = 0;  // Cas de base : tableau vide
     } else {
-        double sum = 0;
-        for (int i = 0; i < root->data.tailleTabDistances; i++) {
-            sum += root->data.Distances[i];
+        double s = 0;
+        for (int i = 0; i < noeud->stats.tailleTabDistances; i++) {
+            s += noeud->stats.Distances[i];
         }
-        root->data.DistanceMoy = sum / root->data.tailleTabDistances;
+        noeud->stats.DistanceMoy = s / noeud->stats.tailleTabDistances;
     }
 }
 
 // Fonction pour insérer un élément dans un AVL
-AVLNode *insertAVL(AVLNode *root, int routeID, double distance) {
+NoeudAVL *insererAVL(NoeudAVL *noeud, int routeID, double distance) {
     // Si l'arbre est vide, créer un nouveau nœud
-    if (root == NULL) {
-        AVLNode *newNode = (AVLNode *)malloc(sizeof(AVLNode));
-        if (newNode == NULL) {
+    if (noeud == NULL) {
+        NoeudAVL *nouveaunoeud = (NoeudAVL *)malloc(sizeof(NoeudAVL));
+        if (nouveaunoeud == NULL) {
             fprintf(stderr, "Erreur d'allocation de mémoire.\n");
             exit(EXIT_FAILURE);
         }
-        newNode->data.routeID = routeID;
-        newNode->data.Distances = malloc(sizeof(double));
-        if (newNode->data.Distances == NULL) {
+        nouveaunoeud->stats.routeID = routeID;
+        nouveaunoeud->stats.Distances = malloc(sizeof(double));
+        if (nouveaunoeud->stats.Distances == NULL) {
             fprintf(stderr, "Erreur d'allocation de mémoire pour routeIDs.\n");
             exit(EXIT_FAILURE);
         }
-        newNode->data.tailleTabDistances = 1;  // Initialize tailleTabDistances to 1
-        newNode->data.Distances[0] = distance;        
-        newNode->data.DistanceMax = distance;
-        newNode->data.DistanceMin = distance;
-        newNode->data.DistanceMoy = distance;
-        newNode->height = 1;
-        newNode->left = newNode->right = NULL;
-        return newNode;
+        nouveaunoeud->stats.tailleTabDistances = 1;  // Initialize tailleTabDistances to 1
+        nouveaunoeud->stats.Distances[0] = distance;        
+        nouveaunoeud->stats.DistanceMax = distance;
+        nouveaunoeud->stats.DistanceMin = distance;
+        nouveaunoeud->stats.DistanceMoy = distance;
+        nouveaunoeud->taille = 1;
+        nouveaunoeud->gauche = nouveaunoeud->droite = NULL;
+        return nouveaunoeud;
     }
 
     // Sinon, comparer et insérer récursivement
 
-    if (routeID < root->data.routeID) {
-        root->left = insertAVL(root->left, routeID, distance);
+    if (routeID < noeud->stats.routeID) {
+        noeud->gauche = insererAVL(noeud->gauche, routeID, distance);
     } else {
-        root->right = insertAVL(root->right, routeID, distance);
+        noeud->droite = insererAVL(noeud->droite, routeID, distance);
     }
     // Mettre à jour la hauteur du nœud actuel
-    root->height = 1 + max(height(root->left), height(root->right));
+    noeud->taille = 1 + max(taille(noeud->gauche), taille(noeud->droite));
 
-    // Équilibrer l'arbre après l'insertion
-    int balance = getBalance(root);
+    // Équilibrer l'arbre après l'insererion
+    int balance = Equilibre(noeud);
 
     // Cas Gauche-Gauche
-    if (balance > 1 && routeID < root->left->data.routeID) {
-        return rotateRight(root);
+    if (balance > 1 && routeID < noeud->gauche->stats.routeID) {
+        return rotationdroite(noeud);
     }
 
     // Cas Droit-Droit
-    if (balance < -1 && routeID > root->right->data.routeID) {
-        return rotateLeft(root);
+    if (balance < -1 && routeID > noeud->droite->stats.routeID) {
+        return rotationgauche(noeud);
     }
 
     // Cas Gauche-Droite
-    if (balance > 1 && routeID > root->left->data.routeID) {
-        root->left = rotateLeft(root->left);
-        return rotateRight(root);
+    if (balance > 1 && routeID > noeud->gauche->stats.routeID) {
+        noeud->gauche = rotationgauche(noeud->gauche);
+        return rotationdroite(noeud);
     }
 
     // Cas Droit-Gauche
-    if (balance < -1 && routeID < root->right->data.routeID) {
-        root->right = rotateRight(root->right);
-        return rotateLeft(root);
+    if (balance < -1 && routeID < noeud->droite->stats.routeID) {
+        noeud->droite = rotationdroite(noeud->droite);
+        return rotationgauche(noeud);
     }
 
-    return root;
+    return noeud;
 }
 
 
 // Fonction de recherche dans un AVL
-AVLNode *searchAVL(AVLNode *root, int routeID) {
+NoeudAVL *rechercheAVL(NoeudAVL *noeud, int routeID) {
     // Parcours récursif de l'arbre
-    if (root == NULL){
+    if (noeud == NULL){
         return NULL;
     }
     
-    if (routeID == root->data.routeID) {
-        return root;
+    if (routeID == noeud->stats.routeID) {
+        return noeud;
     }
-    if (routeID < root->data.routeID){
-        return searchAVL(root->left, routeID);
+    if (routeID < noeud->stats.routeID){
+        return rechercheAVL(noeud->gauche, routeID);
     } else {
-        return searchAVL(root->right, routeID);
+        return rechercheAVL(noeud->droite, routeID);
     }
 }
 
-void Distance (AVLNode **avl, const char *line){
+void Distance (NoeudAVL **avl, const char *ligne){
     int routeID;
     double distance;
 
     // Utiliser le point comme séparateur décimal
     setlocale(LC_NUMERIC, "C");
     
-    if (sscanf(line, "%d;%*d;%*255[^;];%*255[^;];%lf;%*[^;\n]", &routeID, &distance) == 2) {
-        AVLNode *existingNode = searchAVL(*avl, routeID);
-        if (existingNode == NULL) {
-            *avl = insertAVL(*avl, routeID, distance);
+    if (sscanf(ligne, "%d;%*d;%*255[^;];%*255[^;];%lf;%*[^;\n]", &routeID, &distance) == 2) {
+        NoeudAVL *existenoeud = rechercheAVL(*avl, routeID);
+        if (existenoeud == NULL) {
+            *avl = insererAVL(*avl, routeID, distance);
         } else {
             
-            existingNode->data.Distances = (double *)realloc(existingNode->data.Distances, sizeof(double) * (existingNode->data.tailleTabDistances + 1));
+            existenoeud->stats.Distances = (double *)realloc(existenoeud->stats.Distances, sizeof(double) * (existenoeud->stats.tailleTabDistances + 1));
 
-            if (existingNode->data.Distances == NULL) {
+            if (existenoeud->stats.Distances == NULL) {
                 fprintf(stderr, "Erreur d'allocation dynamique de mémoire pour routeIDs.\n");
                 exit(EXIT_FAILURE);
             }
-            existingNode->data.Distances[existingNode->data.tailleTabDistances] = distance;
-            existingNode->data.tailleTabDistances++; // Increment tailleTabDistances
-            MajDistanceMAX (existingNode);
-            MajDistanceMIN (existingNode);
-            MajDistanceMOY (existingNode);
+            existenoeud->stats.Distances[existenoeud->stats.tailleTabDistances] = distance;
+            existenoeud->stats.tailleTabDistances++; // Increment tailleTabDistances
+            MajDistanceMAX (existenoeud);
+            MajDistanceMIN (existenoeud);
+            MajDistanceMOY (existenoeud);
         }
     } else {
         fprintf(stderr, "Erreur de lecture de la ligne du fichier.\n");
@@ -245,52 +245,52 @@ void Distance (AVLNode **avl, const char *line){
     }
 }
 
-void process(FILE *fichier, AVLNode **avl) {
+void procedure(FILE *fichier, NoeudAVL **avl) {
     setlocale(LC_ALL, "");
 
-    char buffer[256];
-    if (fgets(buffer, sizeof(buffer), fichier) == NULL) {
+    char tab[256];
+    if (fgets(tab, sizeof(tab), fichier) == NULL) {
         fprintf(stderr, "Erreur lors de la lecture de la première ligne du fichier.\n");
         exit(EXIT_FAILURE);
     }
 
-    char line[256];
-    while (fgets(line, sizeof(line), fichier) != NULL) {
-        Distance (avl, line);
+    char ligne[256];
+    while (fgets(ligne, sizeof(ligne), fichier) != NULL) {
+        Distance (avl, ligne);
     }
 }
 
 
-void getTop50Counts(const AVLNode *root, CityStats *result, int *index) {
-    if (root != NULL) {
-        getTop50Counts(root->left, result, index);
+void Top50compteurs(const NoeudAVL *noeud, StatsVille *result, int *index) {
+    if (noeud != NULL) {
+        Top50compteurs(noeud->gauche, result, index);
 
-        if (*index < 50 || (root->data.DistanceMax - root->data.DistanceMin) > (result[49].DistanceMax - result[49].DistanceMin)) {
+        if (*index < 50 || (noeud->stats.DistanceMax - noeud->stats.DistanceMin) > (result[49].DistanceMax - result[49].DistanceMin)) {
             if (*index == 50) {
                 (*index)--;
             }
 
             // Insérer le nœud courant dans le tableau à la bonne position
             int i = *index - 1;
-            while (i >= 0 && (root->data.DistanceMax - root->data.DistanceMin) > (result[i].DistanceMax - result[i].DistanceMin)) {
+            while (i >= 0 && (noeud->stats.DistanceMax - noeud->stats.DistanceMin) > (result[i].DistanceMax - result[i].DistanceMin)) {
                 result[i + 1] = result[i];
                 i--;
             }
 
-            result[i + 1] = root->data;
+            result[i + 1] = noeud->stats;
             (*index)++;
         }
 
-        getTop50Counts(root->right, result, index);
+        Top50compteurs(noeud->droite, result, index);
     }
 }
 
 
-void printTopsDistances(CityStats topCities[], int count) {
+void afficherTopsDistances(StatsVille topVilles[], int compteur) {
     printf("Top 50 des routes avec le plus grand écart entre la valeur max et la valeur min :\n");
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < compteur; i++) {
         printf("route n°%d : %g distance max, %g distance min, %g distance moyenne, %g écart maxmin\n",
-        topCities[i].routeID, topCities[i].DistanceMax, topCities[i].DistanceMin, topCities[i].DistanceMoy, (topCities[i].DistanceMax - topCities[i].DistanceMin));
+        topVilles[i].routeID, topVilles[i].DistanceMax, topVilles[i].DistanceMin, topVilles[i].DistanceMoy, (topVilles[i].DistanceMax - topVilles[i].DistanceMin));
 
 
     }
@@ -299,30 +299,30 @@ void printTopsDistances(CityStats topCities[], int count) {
 
 
 // Fonction pour libérer récursivement la mémoire d'un arbre AVL
-void freeAVL(AVLNode *root) {
-    if (root == NULL) {
+void libererAVL(NoeudAVL *noeud) {
+    if (noeud == NULL) {
         return;
     }
 
     // Libérer les sous-arbres gauche et droit
-    freeAVL(root->left);
-    freeAVL(root->right);
+    libererAVL(noeud->gauche);
+    libererAVL(noeud->droite);
 
     // Libérer la mémoire du nœud courant, y compris routeIDs
-    free(root->data.Distances);
-    free(root);
+    free(noeud->stats.Distances);
+    free(noeud);
 }
 
 // Fonction pour libérer toute la structure AVL, y compris la racine
-void freeAVLTree(AVLNode **root) {
-    if (*root != NULL) {
-        freeAVL(*root);  // Libérer la mémoire des sous-arbres gauche et droit
-        *root = NULL;    // Définir la racine sur NULL après la libération de la sous-structure AVL
+void libererAVLArbre(NoeudAVL **noeud) {
+    if (*noeud != NULL) {
+        libererAVL(*noeud);  // Libérer la mémoire des sous-arbres gauche et droit
+        *noeud = NULL;    // Définir la racine sur NULL après la libération de la sous-structure AVL
     }
 }
 
-void saveResultsToFile(const char *filename, const CityStats *topEcartsDistances, int topEcartsDistancesCount) {
-    FILE *file = fopen(filename, "wb");
+void SauvegarderResultats(const char *fichier, const StatsVille *topEcartsDistances, int topEcartsDistancescompteur) {
+    FILE *file = fopen(fichier, "wb");
     if (file == NULL) {
         fprintf(stderr, "Impossible d'ouvrir le fichier de sauvegarde pour l'écriture.\n");
         perror("Error");
@@ -330,7 +330,7 @@ void saveResultsToFile(const char *filename, const CityStats *topEcartsDistances
     }
 
 
-    for (int i = 0; i < topEcartsDistancesCount; i++) {
+    for (int i = 0; i < topEcartsDistancescompteur; i++) {
         fprintf(file, "%d;%d;%g;%g;%g;%g\n", (i+1), topEcartsDistances[i].routeID, topEcartsDistances[i].DistanceMin, topEcartsDistances[i].DistanceMoy, topEcartsDistances[i].DistanceMax, (topEcartsDistances[i].DistanceMax-topEcartsDistances[i].DistanceMin));
     }
 
@@ -344,35 +344,35 @@ int main() {
         errx(1, "main: chdir error");
 
     // Ouvrir le fichier CSV en mode lecture
-    const char *filename = "data/data.csv";
-    FILE *fichier = fopen(filename, "r");
+    const char *fichier = "data/data.csv";
+    FILE *fichier = fopen(fichier, "r");
 
     if (fichier == NULL) {
         fprintf(stderr, "Impossible d'ouvrir le fichier CSV.\n");
         return EXIT_FAILURE;
     }
     
-    AVLNode *avl = NULL;
+    NoeudAVL *avl = NULL;
     
-    process(fichier, &avl);
+    procedure(fichier, &avl);
     
 
     
-    CityStats topEcartsDistances[50];
-    int topEcartsDistancesCount = 0;
+    StatsVille topEcartsDistances[50];
+    int topEcartsDistancescompteur = 0;
 
-    getTop50Counts(avl, topEcartsDistances, &topEcartsDistancesCount);
+    Top50compteurs(avl, topEcartsDistances, &topEcartsDistancescompteur);
 
     // Affichage du résultat
-    printTopsDistances(topEcartsDistances,topEcartsDistancesCount);
+    afficherTopsDistances(topEcartsDistances,topEcartsDistancescompteur);
 
      // Fermer le fichier
     fclose(fichier);
-    saveResultsToFile("temp/data_s.dat", topEcartsDistances, topEcartsDistancesCount);
+    SauvegarderResultats("temp/data_s.dat", topEcartsDistances, topEcartsDistancescompteur);
     
     
     // Libérer la mémoire de l'arbre AVL des départs
-    freeAVLTree(&avl);
+    libererAVLArbre(&avl);
     
     return 0; // Terminer le programme avec succès
 }
