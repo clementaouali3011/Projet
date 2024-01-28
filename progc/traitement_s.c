@@ -322,8 +322,8 @@ void libererAVLArbre(NoeudAVL **noeud) {
 }
 
 void SauvegarderResultats(const char *fichier, const StatsVille *topEcartsDistances, int topEcartsDistancescompteur) {
-    FILE *file = fopen(fichier, "wb");
-    if (file == NULL) {
+    FILE *f = fopen(fichier, "wb");
+    if (f == NULL) {
         fprintf(stderr, "Impossible d'ouvrir le fichier de sauvegarde pour l'écriture.\n");
         perror("Error");
         exit(EXIT_FAILURE);
@@ -331,10 +331,10 @@ void SauvegarderResultats(const char *fichier, const StatsVille *topEcartsDistan
 
 
     for (int i = 0; i < topEcartsDistancescompteur; i++) {
-        fprintf(file, "%d;%d;%g;%g;%g;%g\n", (i+1), topEcartsDistances[i].routeID, topEcartsDistances[i].DistanceMin, topEcartsDistances[i].DistanceMoy, topEcartsDistances[i].DistanceMax, (topEcartsDistances[i].DistanceMax-topEcartsDistances[i].DistanceMin));
+        fprintf(f, "%d;%d;%g;%g;%g;%g\n", (i+1), topEcartsDistances[i].routeID, topEcartsDistances[i].DistanceMin, topEcartsDistances[i].DistanceMoy, topEcartsDistances[i].DistanceMax, (topEcartsDistances[i].DistanceMax-topEcartsDistances[i].DistanceMin));
     }
 
-    fclose(file);
+    fclose(f);
 }
 
 int main() {
