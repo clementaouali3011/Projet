@@ -169,26 +169,26 @@ NoeudAVL *insererAVL(NoeudAVL *noeud, int routeID, double distance) {
     noeud->taille = 1 + max(taille(noeud->gauche), taille(noeud->droite));
 
     // Équilibrer l'arbre après l'insererion
-    int balance = Equilibre(noeud);
+    int eq = Equilibre(noeud);
 
     // Cas Gauche-Gauche
-    if (balance > 1 && routeID < noeud->gauche->stats.routeID) {
+    if (eq > 1 && routeID < noeud->gauche->stats.routeID) {
         return rotationdroite(noeud);
     }
 
     // Cas Droit-Droit
-    if (balance < -1 && routeID > noeud->droite->stats.routeID) {
+    if (eq < -1 && routeID > noeud->droite->stats.routeID) {
         return rotationgauche(noeud);
     }
 
     // Cas Gauche-Droite
-    if (balance > 1 && routeID > noeud->gauche->stats.routeID) {
+    if (eq > 1 && routeID > noeud->gauche->stats.routeID) {
         noeud->gauche = rotationgauche(noeud->gauche);
         return rotationdroite(noeud);
     }
 
     // Cas Droit-Gauche
-    if (balance < -1 && routeID < noeud->droite->stats.routeID) {
+    if (eq < -1 && routeID < noeud->droite->stats.routeID) {
         noeud->droite = rotationdroite(noeud->droite);
         return rotationgauche(noeud);
     }
