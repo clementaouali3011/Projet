@@ -7,29 +7,29 @@
 
 // Structure pour stocker les statistiques sur une ville dans l'AVL
 typedef struct {
-    char cityName[100];
+    char NomVille[100];
     int NbTrajets;
     int NbDeparts;
     int *routeIDs;  // Tableau dynamique d'entiers pour stocker les RouteID
     int tailleTabRoute;
-} CityStats;
+} StatsVille;
 
 
 // Structure pour les nœuds de l'AVL
-typedef struct AVLNode {
-    CityStats data;
-    struct AVLNode *left;
-    struct AVLNode *right;
-    int height;
-} AVLNode;
+typedef struct NoeudAVL {
+    StatsVille stats;
+    struct NoeudAVL *gauche;
+    struct NoeudAVL *droite;
+    int taille;
+} NoeudAVL;
 
 
 
 
 // Fonction pour calculer la hauteur d'un nœud
-int height(AVLNode *node) {
-    if (node == NULL) return 0;
-    return node->height;
+int taille(NoeudAVL *noeud) {
+    if (noeud == NULL) return 0;
+    return noeud->taille;
 }
 
 // Fonction pour obtenir le maximum de deux nombres
@@ -38,34 +38,34 @@ int max(int a, int b) {
 }
 
 // Fonction pour effectuer une rotation à droite
-AVLNode *rotateRight(AVLNode *y) {
-    AVLNode *x = y->left;
-    AVLNode *T2 = x->right;
+NoeudAVL *rotationdroite(NoeudAVL *y) {
+    NoeudAVL *x = y->gauche;
+    NoeudAVL *T2 = x->droite;
 
     // Effectuer la rotation
-    x->right = y;
-    y->left = T2;
+    x->droite = y;
+    y->gauche = T2;
 
     // Mettre à jour les hauteurs
-    y->height = max(height(y->left), height(y->right)) + 1;
-    x->height = max(height(x->left), height(x->right)) + 1;
+    y->taille = max(taille(y->gauche), taille(y->droite)) + 1;
+    x->taille = max(taille(x->gauche), taille(x->droite)) + 1;
 
     // Retourner le nouveau nœud racine
     return x;
 }
 
 // Fonction pour effectuer une rotation à gauche
-AVLNode *rotateLeft(AVLNode *x) {
-    AVLNode *y = x->right;
-    AVLNode *T2 = y->left;
+NoeudAVL *rotationgauche(NoeudAVL *x) {
+    NoeudAVL *y = x->droite;
+    NoeudAVL *T2 = y->gauche;
 
     // Effectuer la rotation
-    y->left = x;
-    x->right = T2;
+    y->gauche = x;
+    x->droite = T2;
 
     // Mettre à jour les hauteurs
-    x->height = max(height(x->left), height(x->right)) + 1;
-    y->height = max(height(y->left), height(y->right)) + 1;
+    x->taille = max(taille(x->gauche), taille(x->droite)) + 1;
+    y->taille = max(taille(y->gauche), taille(y->droite)) + 1;
 
     // Retourner le nouveau nœud racine
     return y;
@@ -74,167 +74,167 @@ AVLNode *rotateLeft(AVLNode *x) {
 
 
 // Fonction pour obtenir le facteur d'équilibre d'un nœud
-int getBalance(AVLNode *node) {
-    if (node == NULL) return 0;
-    return height(node->left) - height(node->right);
+int Equilibre(NoeudAVL *noeud) {
+    if (noeud == NULL) return 0;
+    return taille(noeud->gauche) - taille(noeud->droite);
 }
 
 // Fonction pour insérer un élément dans un AVL
-AVLNode *insertAVLDeparts(AVLNode *root, const char *cityName) {
+NoeudAVL *insererAVLDeparts(NoeudAVL *noeud, const char *NomVille) {
     // Si l'arbre est vide, créer un nouveau nœud
-    if (root == NULL) {
-        AVLNode *newNode = (AVLNode *)malloc(sizeof(AVLNode));
-        if (newNode == NULL) {
+    if (noeud == NULL) {
+        NoeudAVL *nouveaunoeud = (NoeudAVL *)malloc(sizeof(NoeudAVL));
+        if (nouveaunoeud == NULL) {
             fprintf(stderr, "Erreur d'allocation de mémoire.\n");
             exit(EXIT_FAILURE);
         }
-        strcpy(newNode->data.cityName, cityName);
-        newNode->data.NbDeparts = 1;
-        newNode->height = 1;
-        newNode->left = newNode->right = NULL;
-        return newNode;
+        strcpy(nouveaunoeud->stats.NomVille, NomVille);
+        nouveaunoeud->stats.NbDeparts = 1;
+        nouveaunoeud->taille = 1;
+        nouveaunoeud->gauche = nouveaunoeud->droite = NULL;
+        return nouveaunoeud;
     }
 
     // Sinon, comparer et insérer récursivement
-    int compare = strcmp(cityName, root->data.cityName);
+    int compare = strcmp(NomVille, noeud->stats.NomVille);
 
     if (compare < 0) {
-        root->left = insertAVLDeparts(root->left, cityName);
+        noeud->gauche = insererAVLDeparts(noeud->gauche, NomVille);
     } else if (compare > 0) {
-        root->right = insertAVLDeparts(root->right, cityName);
+        noeud->droite = insererAVLDeparts(noeud->droite, NomVille);
     } else {
         // La ville existe déjà, mettez à jour le compteur ou effectuez une autre action
-        printf("Ville déjà existante : %s, mise à jour du compteur.\n", cityName);
-        (root->data.NbDeparts)++;
-        return root;
+        printf("Ville déjà existante : %s, mise à jour du compteur.\n", NomVille);
+        (noeud->stats.NbDeparts)++;
+        return noeud;
     }
 
     // Mettre à jour la hauteur du nœud actuel
-    root->height = 1 + max(height(root->left), height(root->right));
+    noeud->taille = 1 + max(taille(noeud->gauche), taille(noeud->droite));
 
     // Équilibrer l'arbre après l'insertion
-    int balance = getBalance(root);
+    int eq = Equilibre(noeud);
 
     // Cas Gauche-Gauche
-    if (balance > 1 && strcmp(cityName, root->left->data.cityName) < 0) {
-        return rotateRight(root);
+    if (eq > 1 && strcmp(NomVille, noeud->gauche->stats.NomVille) < 0) {
+        return rotationdroite(noeud);
     }
 
     // Cas Droit-Droit
-    if (balance < -1 && strcmp(cityName, root->right->data.cityName) > 0) {
-        return rotateLeft(root);
+    if (eq < -1 && strcmp(NomVille, noeud->droite->stats.NomVille) > 0) {
+        return rotationgauche(noeud);
     }
 
     // Cas Gauche-Droite
-    if (balance > 1 && strcmp(cityName, root->left->data.cityName) > 0) {
-        root->left = rotateLeft(root->left);
-        return rotateRight(root);
+    if (eq > 1 && strcmp(NomVille, noeud->gauche->stats.NomVille) > 0) {
+        noeud->gauche = rotationgauche(noeud->gauche);
+        return rotationdroite(noeud);
     }
 
     // Cas Droit-Gauche
-    if (balance < -1 && strcmp(cityName, root->right->data.cityName) < 0) {
-        root->right = rotateRight(root->right);
-        return rotateLeft(root);
+    if (eq < -1 && strcmp(NomVille, noeud->droite->stats.NomVille) < 0) {
+        noeud->droite = rotationdroite(noeud->droite);
+        return rotationgauche(noeud);
     }
 
-    return root;
+    return noeud;
 }
 
 // Fonction pour insérer un élément dans un AVL
-AVLNode *insertAVLTrajets(AVLNode *root, const char *cityName, int count, int routeID) {
+NoeudAVL *insererAVLTrajets(NoeudAVL *noeud, const char *NomVille, int compteur, int routeID) {
     // Si l'arbre est vide, créer un nouveau nœud
-    if (root == NULL) {
-        AVLNode *newNode = (AVLNode *)malloc(sizeof(AVLNode));
-        if (newNode == NULL) {
+    if (noeud == NULL) {
+        NoeudAVL *nouveaunoeud = (NoeudAVL *)malloc(sizeof(NoeudAVL));
+        if (nouveaunoeud == NULL) {
             fprintf(stderr, "Erreur d'allocation de mémoire.\n");
             exit(EXIT_FAILURE);
         }
-        strcpy(newNode->data.cityName, cityName);
-        newNode->data.NbTrajets = count;
-        newNode->data.tailleTabRoute = 1;  // Initialiser le compteur à un
-        newNode->data.routeIDs = (int *)malloc(sizeof(int));  // Allouer mémoire pour le tableau
-        if (newNode->data.routeIDs == NULL) {
+        strcpy(nouveaunoeud->stats.NomVille, NomVille);
+        nouveaunoeud->stats.NbTrajets = compteur;
+        nouveaunoeud->stats.tailleTabRoute = 1;  // Initialiser le compteur à un
+        nouveaunoeud->stats.routeIDs = (int *)malloc(sizeof(int));  // Allouer mémoire pour le tableau
+        if (nouveaunoeud->stats.routeIDs == NULL) {
             fprintf(stderr, "Erreur d'allocation de mémoire pour routeIDs.\n");
             exit(EXIT_FAILURE);
         }
-        newNode->data.routeIDs[0] = routeID;  // Ajouter le RouteID au tableau
+        nouveaunoeud->stats.routeIDs[0] = routeID;  // Ajouter le RouteID au tableau
 
-        newNode->height = 1;
-        newNode->left = newNode->right = NULL;
-        return newNode;
+        nouveaunoeud->taille = 1;
+        nouveaunoeud->gauche = nouveaunoeud->droite = NULL;
+        return nouveaunoeud;
     }
 
     // Sinon, comparer et insérer récursivement
-    int compare = strcmp(cityName, root->data.cityName);
+    int compare = strcmp(NomVille, noeud->stats.NomVille);
 
     if (compare < 0) {
-        root->left = insertAVLTrajets(root->left, cityName, count, routeID);
+        noeud->gauche = insererAVLTrajets(noeud->gauche, NomVille, compteur, routeID);
     } else if (compare > 0) {
-        root->right = insertAVLTrajets(root->right, cityName, count, routeID);
+        noeud->droite = insererAVLTrajets(noeud->droite, NomVille, compteur, routeID);
     } else {
         // La ville existe déjà, mettez à jour le compteur ou effectuez une autre action
-        printf("Ville déjà existante : %s, mise à jour du compteur.\n", cityName);
-        (root->data.NbTrajets)++;
-        root->data.tailleTabRoute++;
-        root->data.routeIDs = (int *)realloc(root->data.routeIDs, sizeof(int) * root->data.tailleTabRoute);
-        if (root->data.routeIDs == NULL) {
+        printf("Ville déjà existante : %s, mise à jour du compteur.\n", NomVille);
+        (noeud->stats.NbTrajets)++;
+        noeud->stats.tailleTabRoute++;
+        noeud->stats.routeIDs = (int *)realloc(noeud->stats.routeIDs, sizeof(int) * noeud->stats.tailleTabRoute);
+        if (noeud->stats.routeIDs == NULL) {
             fprintf(stderr, "Erreur d'allocation dynamique de mémoire pour routeIDs.\n");
             exit(EXIT_FAILURE);
         }
-        root->data.routeIDs[root->data.tailleTabRoute - 1] = routeID;
-        return root;
+        noeud->stats.routeIDs[noeud->stats.tailleTabRoute - 1] = routeID;
+        return noeud;
     }
 
     // Mettre à jour la hauteur du nœud actuel
-    root->height = 1 + max(height(root->left), height(root->right));
+    noeud->taille = 1 + max(taille(noeud->gauche), taille(noeud->droite));
 
     // Équilibrer l'arbre après l'insertion
-    int balance = getBalance(root);
+    int eq = Equilibre(noeud);
 
     // Cas Gauche-Gauche
-    if (balance > 1 && strcmp(cityName, root->left->data.cityName) < 0) {
-        return rotateRight(root);
+    if (eq > 1 && strcmp(NomVille, noeud->gauche->stats.NomVille) < 0) {
+        return rotationdroite(noeud);
     }
 
     // Cas Droit-Droit
-    if (balance < -1 && strcmp(cityName, root->right->data.cityName) > 0) {
-        return rotateLeft(root);
+    if (eq < -1 && strcmp(NomVille, noeud->droite->stats.NomVille) > 0) {
+        return rotationgauche(noeud);
     }
 
     // Cas Gauche-Droite
-    if (balance > 1 && strcmp(cityName, root->left->data.cityName) > 0) {
-        root->left = rotateLeft(root->left);
-        return rotateRight(root);
+    if (eq > 1 && strcmp(NomVille, noeud->gauche->stats.NomVille) > 0) {
+        noeud->gauche = rotationgauche(noeud->gauche);
+        return rotationdroite(noeud);
     }
 
     // Cas Droit-Gauche
-    if (balance < -1 && strcmp(cityName, root->right->data.cityName) < 0) {
-        root->right = rotateRight(root->right);
-        return rotateLeft(root);
+    if (eq < -1 && strcmp(NomVille, noeud->droite->stats.NomVille) < 0) {
+        noeud->droite = rotationdroite(noeud->droite);
+        return rotationgauche(noeud);
     }
 
-    return root;
+    return noeud;
 }
 
 // Fonction de recherche dans un AVL
-AVLNode *searchAVL(AVLNode *root, const char *cityName) {
+NoeudAVL *rechercheAVL(NoeudAVL *noeud, const char *NomVille) {
     // Parcours récursif de l'arbre
-    if (root == NULL){
+    if (noeud == NULL){
         return NULL;
     }
   
-    if (strcmp(cityName, root->data.cityName) == 0) {
-        return root;
+    if (strcmp(NomVille, noeud->stats.NomVille) == 0) {
+        return noeud;
     }
   
-    if (strcmp(cityName, root->data.cityName) < 0) {
-        return searchAVL(root->left, cityName);
+    if (strcmp(NomVille, noeud->stats.NomVille) < 0) {
+        return rechercheAVL(noeud->gauche, NomVille);
     } else {
-        return searchAVL(root->right, cityName);
+        return rechercheAVL(noeud->droite, NomVille);
     }
 }
 
-int IsRouteIDFound(int *tab, int routeID, int tailleTabRoute){
+int RouteIDTrouve(int *tab, int routeID, int tailleTabRoute){
     for (int i = 0; i < tailleTabRoute; i++) {
         if (tab[i] == routeID) {
             return 1;  // RouteID trouvé
@@ -243,49 +243,49 @@ int IsRouteIDFound(int *tab, int routeID, int tailleTabRoute){
     return 0;
 }
 // Fonction pour libérer récursivement la mémoire d'un arbre AVL
-void freeAVL(AVLNode *root) {
-    if (root == NULL) {
+void libererAVL(NoeudAVL *noeud) {
+    if (noeud == NULL) {
         return;
     }
 
     // Libérer les sous-arbres gauche et droit
-    freeAVL(root->left);
-    freeAVL(root->right);
+    libererAVL(noeud->gauche);
+    libererAVL(noeud->droite);
 
     // Libérer la mémoire du nœud courant, y compris routeIDs
-    free(root->data.routeIDs);
-    free(root);
+    free(noeud->stats.routeIDs);
+    free(noeud);
 }
 
 // Fonction pour libérer toute la structure AVL, y compris la racine
-void freeAVLTree(AVLNode **root) {
-    if (*root != NULL) {
-        freeAVL(*root);  // Libérer la mémoire des sous-arbres gauche et droit
-        *root = NULL;    // Définir la racine sur NULL après la libération de la sous-structure AVL
+void libererAVLArbre(NoeudAVL **noeud) {
+    if (*noeud != NULL) {
+        libererAVL(*noeud);  // Libérer la mémoire des sous-arbres gauche et droit
+        *noeud = NULL;    // Définir la racine sur NULL après la libération de la sous-structure AVL
     }
 }
 
-void printTopCities(CityStats topCities[], int count) {
+void afficherTopVilles(StatsVille TopVilles[], int compteur) {
     printf("Top 10 des villes avec le nombre total de Trajets et Départs :\n");
-    for (int i = 0; i < count; i++) {
-        printf("%s : %d trajets,  %d départs\n", topCities[i].cityName, topCities[i].NbTrajets, topCities[i].NbDeparts);
+    for (int i = 0; i < compteur; i++) {
+        printf("%s : %d trajets,  %d départs\n", TopVilles[i].NomVille, TopVilles[i].NbTrajets, TopVilles[i].NbDeparts);
     }
     printf("\n");
 }
 
-void Departures(AVLNode **avl, const char *line) {
+void Departs(NoeudAVL **avl, const char *ligne) {
     int stepID;
-    char townA[256];
+    char villeA[256];
 
-    if (sscanf(line, "%*d;%d;%255[^;];%*[^;];%*f;%*[^;\n]", &stepID, townA) == 2) {
+    if (sscanf(ligne, "%*d;%d;%255[^;];%*[^;];%*f;%*[^;\n]", &stepID, villeA) == 2) {
         if (stepID==1){
-            AVLNode *existingNode = searchAVL(*avl, townA);
+            NoeudAVL *existenoeud = rechercheAVL(*avl, villeA);
 
-            if (existingNode == NULL) {
-                *avl = insertAVLDeparts(*avl, townA);
+            if (existenoeud == NULL) {
+                *avl = insererAVLDeparts(*avl, villeA);
             } else {
                 // Ville existante, incrémenter le compteur de départs
-                existingNode->data.NbDeparts++;
+                existenoeud->stats.NbDeparts++;
             }
         }
      
@@ -295,48 +295,48 @@ void Departures(AVLNode **avl, const char *line) {
     }
 }
 
-void Trips(AVLNode **avl, const char *line) {
+void Trajets(NoeudAVL **avl, const char *ligne) {
     int routeID;
-    char townA[256], townB[256];
+    char villeA[256], villeB[256];
 
-    if (sscanf(line, "%d;%*d;%255[^;];%255[^;];%*f;%*[^;\n]", &routeID, townA, townB) == 3) {
-        AVLNode *existingNodeA = searchAVL(*avl, townA);
-        if (existingNodeA == NULL) {
-            *avl = insertAVLTrajets(*avl, townA, 1, routeID);
+    if (sscanf(ligne, "%d;%*d;%255[^;];%255[^;];%*f;%*[^;\n]", &routeID, villeA, villeB) == 3) {
+        NoeudAVL *existenoeudA = rechercheAVL(*avl, villeA);
+        if (existenoeudA == NULL) {
+            *avl = insererAVLTrajets(*avl, villeA, 1, routeID);
         } else {
-            int ExistingRouteID = IsRouteIDFound(existingNodeA->data.routeIDs, routeID, existingNodeA->data.tailleTabRoute);
+            int existeRouteID = RouteIDTrouve(existenoeudA->stats.routeIDs, routeID, existenoeudA->stats.tailleTabRoute);
         
-            if(ExistingRouteID==0){
-                existingNodeA->data.NbTrajets++;
-                existingNodeA->data.tailleTabRoute++;
-                existingNodeA->data.routeIDs = (int *)realloc(existingNodeA->data.routeIDs,
-                                                            sizeof(int) * existingNodeA->data.tailleTabRoute);
-                if (existingNodeA->data.routeIDs == NULL) {
+            if(existeRouteID==0){
+                existenoeudA->stats.NbTrajets++;
+                existenoeudA->stats.tailleTabRoute++;
+                existenoeudA->stats.routeIDs = (int *)realloc(existenoeudA->stats.routeIDs,
+                                                            sizeof(int) * existenoeudA->stats.tailleTabRoute);
+                if (existenoeudA->stats.routeIDs == NULL) {
                     fprintf(stderr, "Erreur d'allocation dynamique de mémoire pour routeIDs.\n");
                     exit(EXIT_FAILURE);
                 }
-                existingNodeA->data.routeIDs[existingNodeA->data.tailleTabRoute - 1] = routeID;
+                existenoeudA->stats.routeIDs[existenoeudA->stats.tailleTabRoute - 1] = routeID;
             } 
 
         }      
 
-        AVLNode *existingNodeB = searchAVL(*avl, townB);
-        if (existingNodeB == NULL) {
-            *avl = insertAVLTrajets(*avl, townB, 1, routeID);
+        NoeudAVL *existenoeudB = rechercheAVL(*avl, villeB);
+        if (existenoeudB == NULL) {
+            *avl = insererAVLTrajets(*avl, villeB, 1, routeID);
         } else {
-            int ExistingRouteID = IsRouteIDFound(existingNodeB->data.routeIDs, routeID, existingNodeB->data.tailleTabRoute);
+            int existeRouteID = RouteIDTrouve(existenoeudB->stats.routeIDs, routeID, existenoeudB->stats.tailleTabRoute);
             
 
-            if(ExistingRouteID==0){
-                existingNodeB->data.NbTrajets++;
-                existingNodeB->data.tailleTabRoute++;
-                existingNodeB->data.routeIDs = (int *)realloc(existingNodeB->data.routeIDs,
-                                                            sizeof(int) * existingNodeB->data.tailleTabRoute);
-                if (existingNodeB->data.routeIDs == NULL) {
+            if(existeRouteID==0){
+                existenoeudB->stats.NbTrajets++;
+                existenoeudB->stats.tailleTabRoute++;
+                existenoeudB->stats.routeIDs = (int *)realloc(existenoeudB->stats.routeIDs,
+                                                            sizeof(int) * existenoeudB->stats.tailleTabRoute);
+                if (existenoeudB->stats.routeIDs == NULL) {
                     fprintf(stderr, "Erreur d'allocation dynamique de mémoire pour routeIDs.\n");
                     exit(EXIT_FAILURE);
                 }
-                existingNodeB->data.routeIDs[existingNodeB->data.tailleTabRoute - 1] = routeID;
+                existenoeudB->stats.routeIDs[existenoeudB->stats.tailleTabRoute - 1] = routeID;
             }
 
         }    
@@ -346,33 +346,33 @@ void Trips(AVLNode **avl, const char *line) {
     }
 }
 
-void process(FILE *fichier, AVLNode **avl) {
+void procedure(FILE *fichier, NoeudAVL **avl) {
     setlocale(LC_ALL, "");
 
-    char buffer[256];
-    if (fgets(buffer, sizeof(buffer), fichier) == NULL) {
+    char tab[256];
+    if (fgets(tab, sizeof(tab), fichier) == NULL) {
         fprintf(stderr, "Erreur lors de la lecture de la première ligne du fichier.\n");
         exit(EXIT_FAILURE);
     }
 
-    char line[256];
-    while (fgets(line, sizeof(line), fichier) != NULL) {
-        Trips(avl, line);
-        Departures(avl, line);
+    char ligne[256];
+    while (fgets(ligne, sizeof(ligne), fichier) != NULL) {
+        Trajets(avl, ligne);
+        Departs(avl, ligne);
         
         
     }
 }
 
-// Fonction pour récupérer les 10 plus grandes valeurs de count dans un AVL
-void getTop10Counts(const AVLNode *root, CityStats *result, int *index) {
-    if (root != NULL) {
+// Fonction pour récupérer les 10 plus grandes valeurs de compteur dans un AVL
+void Top10compteurs(const NoeudAVL *noeud, StatsVille *resultat, int *index) {
+    if (noeud != NULL) {
         // Parcours récursif de l'arbre
-        getTop10Counts(root->left, result, index);
+        Top10compteurs(noeud->gauche, resultat, index);
 
         // Traitement du nœud courant
-        if (*index < 10 || root->data.NbTrajets > result[9].NbTrajets ||
-            (root->data.NbTrajets == result[9].NbTrajets && strcmp(root->data.cityName, result[9].cityName) < 0)) {
+        if (*index < 10 || noeud->stats.NbTrajets > resultat[9].NbTrajets ||
+            (noeud->stats.NbTrajets == resultat[9].NbTrajets && strcmp(noeud->stats.NomVille, resultat[9].NomVille) < 0)) {
             // Si le tableau n'est pas plein, ou la valeur est plus grande que la plus petite du tableau,
             // ou la valeur est égale mais le nom de ville est plus petit alphabétiquement
             if (*index == 10) {
@@ -382,38 +382,38 @@ void getTop10Counts(const AVLNode *root, CityStats *result, int *index) {
 
             // Trouver la bonne position pour insérer le nœud courant dans le tableau
             int i = *index - 1;
-            while (i >= 0 && (root->data.NbTrajets > result[i].NbTrajets ||
-                              (root->data.NbTrajets == result[i].NbTrajets && strcmp(root->data.cityName, result[i].cityName) < 0))) {
-                result[i + 1] = result[i];
+            while (i >= 0 && (noeud->stats.NbTrajets > resultat[i].NbTrajets ||
+                              (noeud->stats.NbTrajets == resultat[i].NbTrajets && strcmp(noeud->stats.NomVille, resultat[i].NomVille) < 0))) {
+                resultat[i + 1] = resultat[i];
                 i--;
             }
 
             // Insérer le nœud courant dans le tableau à la bonne position
-            result[i + 1] = root->data;
+            resultat[i + 1] = noeud->stats;
             (*index)++;
         }
 
-        getTop10Counts(root->right, result, index);
+        Top10compteurs(noeud->droite, resultat, index);
     }
 }
 
 // Fonction de comparaison insensible à la casse pour qsort
-int compareCityNamesCaseInsensitive(const void *a, const void *b) {
-    return strcasecmp(((CityStats *)a)->cityName, ((CityStats *)b)->cityName);
+int compareNomVilles(const void *a, const void *b) {
+    return strcasecmp(((StatsVille *)a)->NomVille, ((StatsVille *)b)->NomVille);
 }
 
-void saveResultsToFile(const char *filename, const CityStats *topCities, int topCitiesCount) {
-    FILE *file = fopen(filename, "wb");
-    if (file == NULL) {
+void SauvegarderResultats(const char *fichier, const StatsVille *TopVilles, int TopVillescompteur) {
+    FILE *f = fopen(fichier, "wb");
+    if (f == NULL) {
         fprintf(stderr, "Impossible d'ouvrir le fichier de sauvegarde.\n");
         exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < topCitiesCount; i++) {
-        fprintf(file, "%s;%d;%d\n", topCities[i].cityName, topCities[i].NbTrajets, topCities[i].NbDeparts);
+    for (int i = 0; i < TopVillescompteur; i++) {
+        fprintf(f, "%s;%d;%d\n", TopVilles[i].NomVille, TopVilles[i].NbTrajets, TopVilles[i].NbDeparts);
     }
 
-    fclose(file);
+    fclose(f);
 }
 
 int main() {
@@ -423,32 +423,32 @@ int main() {
         errx(1, "main: chdir error");
 
     // Ouvrir le fichier CSV en mode lecture
-    const char *filename = "data/data.csv";
-    FILE *fichier = fopen(filename, "r");
+    const char *fichier = "stats/stats.csv";
+    FILE *fichier = fopen(fichier, "r");
 
     if (fichier == NULL) {
         fprintf(stderr, "Impossible d'ouvrir le fichier CSV.\n");
         return EXIT_FAILURE;
     }
     
-    AVLNode *avl = NULL;
+    NoeudAVL *avl = NULL;
 
-    process(fichier, &avl);
+    procedure(fichier, &avl);
 
-    CityStats topCities[10];
-    int topCitiesCount = 0;
+    StatsVille TopVilles[10];
+    int TopVillescompteur = 0;
 
-    getTop10Counts(avl, topCities, &topCitiesCount);
+    Top10compteurs(avl, TopVilles, &TopVillescompteur);
 
-    qsort(topCities, topCitiesCount, sizeof(CityStats), compareCityNamesCaseInsensitive);
+    qsort(TopVilles, TopVillescompteur, sizeof(StatsVille), compareNomVilles);
     // Affichage du résultat
-    printTopCities(topCities,topCitiesCount);
-    saveResultsToFile("temp/data_t.dat", topCities, topCitiesCount);
+    afficherTopVilles(TopVilles,TopVillescompteur);
+    SauvegarderResultats("temp/stats_t.dat", TopVilles, TopVillescompteur);
     // Fermer le fichier
     fclose(fichier);
     
     // Libérer la mémoire de l'arbre AVL des départs
-    freeAVLTree(&avl);
+    libererAVLArbre(&avl);
 
     return 0; // Terminer le programme avec succès
 }
