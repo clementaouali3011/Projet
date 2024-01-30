@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <unistd.h>
-#include <err.h>
 
 // Structure pour stocker les statistiques sur une ville dans l'AVL
 typedef struct {
@@ -85,7 +84,7 @@ NoeudAVL *insererAVLDeparts(NoeudAVL *noeud, const char *NomVille) {
     if (noeud == NULL) {
         NoeudAVL *nouveaunoeud = (NoeudAVL *)malloc(sizeof(NoeudAVL));
         if (nouveaunoeud == NULL) {
-            fprintf(stderr, "Erreur d'allocation de mémoire.\n");
+            fprintf("Erreur d'allocation de mémoire.\n");
             exit(EXIT_FAILURE);
         }
         strcpy(nouveaunoeud->stats.NomVille, NomVille);
@@ -146,7 +145,7 @@ NoeudAVL *insererAVLTrajets(NoeudAVL *noeud, const char *NomVille, int compteur,
     if (noeud == NULL) {
         NoeudAVL *nouveaunoeud = (NoeudAVL *)malloc(sizeof(NoeudAVL));
         if (nouveaunoeud == NULL) {
-            fprintf(stderr, "Erreur d'allocation de mémoire.\n");
+            fprintf( "Erreur d'allocation de mémoire.\n");
             exit(EXIT_FAILURE);
         }
         strcpy(nouveaunoeud->stats.NomVille, NomVille);
@@ -154,7 +153,7 @@ NoeudAVL *insererAVLTrajets(NoeudAVL *noeud, const char *NomVille, int compteur,
         nouveaunoeud->stats.tailleTabRoute = 1;  // Initialiser le compteur à un
         nouveaunoeud->stats.routeIDs = (int *)malloc(sizeof(int));  // Allouer mémoire pour le tableau
         if (nouveaunoeud->stats.routeIDs == NULL) {
-            fprintf(stderr, "Erreur d'allocation de mémoire pour routeIDs.\n");
+            fprintf( "Erreur d'allocation de mémoire pour routeIDs.\n");
             exit(EXIT_FAILURE);
         }
         nouveaunoeud->stats.routeIDs[0] = routeID;  // Ajouter le RouteID au tableau
@@ -178,7 +177,7 @@ NoeudAVL *insererAVLTrajets(NoeudAVL *noeud, const char *NomVille, int compteur,
         noeud->stats.tailleTabRoute++;
         noeud->stats.routeIDs = (int *)realloc(noeud->stats.routeIDs, sizeof(int) * noeud->stats.tailleTabRoute);
         if (noeud->stats.routeIDs == NULL) {
-            fprintf(stderr, "Erreur d'allocation dynamique de mémoire pour routeIDs.\n");
+            fprintf( "Erreur d'allocation dynamique de mémoire pour routeIDs.\n");
             exit(EXIT_FAILURE);
         }
         noeud->stats.routeIDs[noeud->stats.tailleTabRoute - 1] = routeID;
@@ -290,7 +289,7 @@ void Departs(NoeudAVL **avl, const char *ligne) {
         }
      
     } else {
-        fprintf(stderr, "Erreur de lecture de la ligne du fichier.\n");
+        fprintf( "Erreur de lecture de la ligne du fichier.\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -312,7 +311,7 @@ void Trajets(NoeudAVL **avl, const char *ligne) {
                 existenoeudA->stats.routeIDs = (int *)realloc(existenoeudA->stats.routeIDs,
                                                             sizeof(int) * existenoeudA->stats.tailleTabRoute);
                 if (existenoeudA->stats.routeIDs == NULL) {
-                    fprintf(stderr, "Erreur d'allocation dynamique de mémoire pour routeIDs.\n");
+                    fprintf( "Erreur d'allocation dynamique de mémoire pour routeIDs.\n");
                     exit(EXIT_FAILURE);
                 }
                 existenoeudA->stats.routeIDs[existenoeudA->stats.tailleTabRoute - 1] = routeID;
@@ -333,7 +332,7 @@ void Trajets(NoeudAVL **avl, const char *ligne) {
                 existenoeudB->stats.routeIDs = (int *)realloc(existenoeudB->stats.routeIDs,
                                                             sizeof(int) * existenoeudB->stats.tailleTabRoute);
                 if (existenoeudB->stats.routeIDs == NULL) {
-                    fprintf(stderr, "Erreur d'allocation dynamique de mémoire pour routeIDs.\n");
+                    fprintf( "Erreur d'allocation dynamique de mémoire pour routeIDs.\n");
                     exit(EXIT_FAILURE);
                 }
                 existenoeudB->stats.routeIDs[existenoeudB->stats.tailleTabRoute - 1] = routeID;
@@ -341,7 +340,7 @@ void Trajets(NoeudAVL **avl, const char *ligne) {
 
         }    
     } else {
-        fprintf(stderr, "Erreur de lecture de la ligne du fichier.\n");
+        fprintf( "Erreur de lecture de la ligne du fichier.\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -351,7 +350,7 @@ void procedure(FILE *fichier, NoeudAVL **avl) {
 
     char tab[256];
     if (fgets(tab, sizeof(tab), fichier) == NULL) {
-        fprintf(stderr, "Erreur lors de la lecture de la première ligne du fichier.\n");
+        fprintf( "Erreur lors de la lecture de la première ligne du fichier.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -405,7 +404,7 @@ int compareNomVilles(const void *a, const void *b) {
 void SauvegarderResultats(const char *fichier, const StatsVille *TopVilles, int TopVillescompteur) {
     FILE *f = fopen(fichier, "wb");
     if (f == NULL) {
-        fprintf(stderr, "Impossible d'ouvrir le fichier de sauvegarde.\n");
+        fprintf( "Impossible d'ouvrir le fichier de sauvegarde.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -427,7 +426,7 @@ int main() {
     FILE *fichier = fopen(fichier, "r");
 
     if (fichier == NULL) {
-        fprintf(stderr, "Impossible d'ouvrir le fichier CSV.\n");
+        fprintf( "Impossible d'ouvrir le fichier CSV.\n");
         return EXIT_FAILURE;
     }
     
