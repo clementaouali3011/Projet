@@ -339,12 +339,13 @@ void SauvegarderResultats(const char *fichier, const StatsVille *topEcartsDistan
 int main() {
     // Revenir en arrière d'un dossier (aller dans le dossier "projet")
     int err = chdir("..");
-    if (err)
-        errx(1, "main: chdir error");
-
+    if (err) {
+        perror("main: chdir error");
+        return EXIT_FAILURE;
+    }
     // Ouvrir le fichier CSV en mode lecture
-    const char *fichier = "data/data.csv";
-    FILE *fichier = fopen(fichier, "r");
+    const char *nomfichier = "data/data.csv";
+    FILE *fichier = fopen(nomfichier, "r");
 
     if (fichier == NULL) {
         fprintf(stderr, "Impossible d'ouvrir le fichier CSV.\n");
