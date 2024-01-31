@@ -423,7 +423,7 @@ int main() {
         return EXIT_FAILURE;
     }
     // Ouvrir le fichier CSV en mode lecture
-    const char *nomFichier = "stats/stats.csv";
+    const char *nomFichier = "data/data.csv";
     FILE *fichier = fopen(nomFichier, "r");
 
     if (fichier == NULL) {
