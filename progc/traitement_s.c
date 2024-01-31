@@ -138,13 +138,13 @@ NoeudAVL *insererAVL(NoeudAVL *noeud, int routeID, double distance) {
     if (noeud == NULL) {
         NoeudAVL *nouveaunoeud = (NoeudAVL *)malloc(sizeof(NoeudAVL));
         if (nouveaunoeud == NULL) {
-            fprintf( "Erreur d'allocation de mémoire.\n");
+            fprintf(stderr, "Erreur d'allocation de mémoire.\n");
             exit(EXIT_FAILURE);
         }
         nouveaunoeud->stats.routeID = routeID;
         nouveaunoeud->stats.Distances = malloc(sizeof(double));
         if (nouveaunoeud->stats.Distances == NULL) {
-            fprintf( "Erreur d'allocation de mémoire pour routeIDs.\n");
+            fprintf(stderr, "Erreur d'allocation de mémoire pour routeIDs.\n");
             exit(EXIT_FAILURE);
         }
         nouveaunoeud->stats.tailleTabDistances = 1;  // Initialize tailleTabDistances to 1
@@ -229,7 +229,7 @@ void Distance (NoeudAVL **avl, const char *ligne){
             existenoeud->stats.Distances = (double *)realloc(existenoeud->stats.Distances, sizeof(double) * (existenoeud->stats.tailleTabDistances + 1));
 
             if (existenoeud->stats.Distances == NULL) {
-                fprintf( "Erreur d'allocation dynamique de mémoire pour routeIDs.\n");
+                fprintf(stderr, "Erreur d'allocation dynamique de mémoire pour routeIDs.\n");
                 exit(EXIT_FAILURE);
             }
             existenoeud->stats.Distances[existenoeud->stats.tailleTabDistances] = distance;
@@ -239,7 +239,7 @@ void Distance (NoeudAVL **avl, const char *ligne){
             MajDistanceMOY (existenoeud);
         }
     } else {
-        fprintf( "Erreur de lecture de la ligne du fichier.\n");
+        fprintf(stderr, "Erreur de lecture de la ligne du fichier.\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -249,7 +249,7 @@ void procedure(FILE *fichier, NoeudAVL **avl) {
 
     char tab[256];
     if (fgets(tab, sizeof(tab), fichier) == NULL) {
-        fprintf( "Erreur lors de la lecture de la première ligne du fichier.\n");
+        fprintf(stderr, "Erreur lors de la lecture de la première ligne du fichier.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -323,7 +323,7 @@ void libererAVLArbre(NoeudAVL **noeud) {
 void SauvegarderResultats(const char *fichier, const StatsVille *topEcartsDistances, int topEcartsDistancescompteur) {
     FILE *f = fopen(fichier, "wb");
     if (f == NULL) {
-        fprintf( "Impossible d'ouvrir le fichier de sauvegarde pour l'écriture.\n");
+        fprintf(stderr, "Impossible d'ouvrir le fichier de sauvegarde pour l'écriture.\n");
         perror("Error");
         exit(EXIT_FAILURE);
     }
@@ -347,7 +347,7 @@ int main() {
     FILE *fichier = fopen(fichier, "r");
 
     if (fichier == NULL) {
-        fprintf( "Impossible d'ouvrir le fichier CSV.\n");
+        fprintf(stderr, "Impossible d'ouvrir le fichier CSV.\n");
         return EXIT_FAILURE;
     }
     
