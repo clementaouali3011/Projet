@@ -443,7 +443,7 @@ int main() {
     qsort(TopVilles, TopVillescompteur, sizeof(StatsVille), compareNomVilles);
     // Affichage du résultat
     afficherTopVilles(TopVilles,TopVillescompteur);
-    SauvegarderResultats("temp/stats_t.dat", TopVilles, TopVillescompteur);
+    SauvegarderResultats("temp/data_t.dat", TopVilles, TopVillescompteur);
     // Fermer le fichier
     fclose(fichier);
     
