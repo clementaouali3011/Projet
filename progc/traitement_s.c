@@ -4,7 +4,7 @@
 #include <locale.h>
 #include <math.h>
 #include <unistd.h>
-#include <time.h>
+
 
 
 // Structure pour stocker les statistiques sur une ville dans l'AVL
@@ -345,7 +345,6 @@ double obtenirTempsActuel() {
 
 int main() {
     
-    double tempsDebut = obtenirTempsActuel();
     // Ouvrir le fichier CSV en mode lecture
     const char *nomfichier = "data/data.csv";
     FILE *fichier = fopen(nomfichier, "r");
@@ -377,19 +376,6 @@ int main() {
     // Libérer la mémoire de l'arbre AVL des départs
     libererAVLArbre(&avl);
 
-    double tempsFin = obtenirTempsActuel();
-    // Calculer le temps écoulé
-    double tempsTotal = tempsFin - tempsDebut;
-    printf("Temps total d'exécution : %.6f secondes\n", tempsTotal);
-    // Sauvegarder le temps d'exécution dans le fichier dat
-    FILE *f = fopen("temp/res_s.dat", "a");
-    if (f == NULL) {
-        fprintf(stderr, "Impossible d'ouvrir le fichier de sauvegarde pour l'écriture du temps d'exécution.\n");
-        perror("Error");
-        exit(EXIT_FAILURE);
-    }
-    fprintf(f, "\nTemps d'exécution : %.6f secondes\n", tempsTotal);
-    fclose(f);
     
     return 0; // Terminer le programme avec succès
 }
