@@ -2,6 +2,10 @@
 
 #Compile les programmes C s'ils existent puis revient dans le dossier du projet
 cd progc/
+if [ ! -f *.c ];then
+	echo "Il manque les programme c"
+	exit 1
+fi
 make
 cd ../
 
