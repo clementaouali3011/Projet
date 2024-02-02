@@ -221,11 +221,11 @@ NoeudAVL *rechercheAVL(NoeudAVL *noeud, const char *NomVille) {
     if (noeud == NULL){
         return NULL;
     }
-  
+ 
     if (strcmp(NomVille, noeud->stats.NomVille) == 0) {
         return noeud;
     }
-  
+ 
     if (strcmp(NomVille, noeud->stats.NomVille) < 0) {
         return rechercheAVL(noeud->gauche, NomVille);
     } else {
@@ -304,7 +304,7 @@ void Trajets(NoeudAVL **avl, const char *ligne) {
             *avl = insererAVLTrajets(*avl, villeA, 1, routeID);
         } else {
             int existeRouteID = RouteIDTrouve(existenoeudA->stats.routeIDs, routeID, existenoeudA->stats.tailleTabRoute);
-        
+       
             if(existeRouteID==0){
                 existenoeudA->stats.NbTrajets++;
                 existenoeudA->stats.tailleTabRoute++;
@@ -315,7 +315,7 @@ void Trajets(NoeudAVL **avl, const char *ligne) {
                     exit(EXIT_FAILURE);
                 }
                 existenoeudA->stats.routeIDs[existenoeudA->stats.tailleTabRoute - 1] = routeID;
-            } 
+            }
 
         }      
 
@@ -324,7 +324,7 @@ void Trajets(NoeudAVL **avl, const char *ligne) {
             *avl = insererAVLTrajets(*avl, villeB, 1, routeID);
         } else {
             int existeRouteID = RouteIDTrouve(existenoeudB->stats.routeIDs, routeID, existenoeudB->stats.tailleTabRoute);
-            
+           
 
             if(existeRouteID==0){
                 existenoeudB->stats.NbTrajets++;
@@ -358,8 +358,8 @@ void procedure(FILE *fichier, NoeudAVL **avl) {
     while (fgets(ligne, sizeof(ligne), fichier) != NULL) {
         Trajets(avl, ligne);
         Departs(avl, ligne);
-        
-        
+       
+       
     }
 }
 
@@ -416,12 +416,6 @@ void SauvegarderResultats(const char *fichier, const StatsVille *TopVilles, int 
 }
 
 int main() {
-    // Revenir en arrière d'un dossier (aller dans le dossier "projet")
-    int err = chdir("..");
-    if (err) {
-        perror("main: chdir error");
-        return EXIT_FAILURE;
-    }
     // Ouvrir le fichier CSV en mode lecture
     const char *nomFichier = "data/data.csv";
     FILE *fichier = fopen(nomFichier, "r");
@@ -430,7 +424,7 @@ int main() {
         fprintf(stderr, "Impossible d'ouvrir le fichier CSV.\n");
         return EXIT_FAILURE;
     }
-    
+   
     NoeudAVL *avl = NULL;
 
     procedure(fichier, &avl);
@@ -443,10 +437,10 @@ int main() {
     qsort(TopVilles, TopVillescompteur, sizeof(StatsVille), compareNomVilles);
     // Affichage du résultat
     afficherTopVilles(TopVilles,TopVillescompteur);
-    SauvegarderResultats("temp/data_t.dat", TopVilles, TopVillescompteur);
+    SauvegarderResultats("temp/res_t.dat", TopVilles, TopVillescompteur);
     // Fermer le fichier
     fclose(fichier);
-    
+   
     // Libérer la mémoire de l'arbre AVL des départs
     libererAVLArbre(&avl);
 

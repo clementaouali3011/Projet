@@ -337,12 +337,7 @@ void SauvegarderResultats(const char *fichier, const StatsVille *topEcartsDistan
 }
 
 int main() {
-    // Revenir en arrière d'un dossier (aller dans le dossier "projet")
-    int err = chdir("..");
-    if (err) {
-        perror("main: chdir error");
-        return EXIT_FAILURE;
-    }
+    
     // Ouvrir le fichier CSV en mode lecture
     const char *nomfichier = "data/data.csv";
     FILE *fichier = fopen(nomfichier, "r");
@@ -368,7 +363,7 @@ int main() {
 
      // Fermer le fichier
     fclose(fichier);
-    SauvegarderResultats("temp/data_s.dat", topEcartsDistances, topEcartsDistancescompteur);
+    SauvegarderResultats("temp/res_s.dat", topEcartsDistances, topEcartsDistancescompteur);
     
     
     // Libérer la mémoire de l'arbre AVL des départs
