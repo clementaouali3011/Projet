@@ -72,7 +72,9 @@ case "$option" in
         echo "Voici les options et leurs utilitées :
         -d1 : afficher les conducteurs avec le plus de trajets.
         -d2 : afficher les conducteurs et la plus grande distance.
-        -l : afficher les 10 trajets les plus longs."
+        -l : afficher les 10 trajets les plus longs.
+        -t : afficher les 10 villes les plus traversées.
+        -s : afficher les statistiques sur les étapes."
         ;;
     *)
         echo "Erreur: Option $option inconnue."
