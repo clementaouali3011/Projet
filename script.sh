@@ -58,13 +58,13 @@ case "$option" in
         ;;
     "-s")
         echo "Option -s selected for file $fichier"
-        ./progc/traitement_s
+        time ./progc/traitement_s
         gnuplot gnplt/test_s.plt
         echo "Vous pouvez retrouver le graphique dans le dossier images !"
         ;;
     "-t")
         echo "Option -t selected for file $fichier"
-        ./progc/traitement_t
+        time ./progc/traitement_t
         gnuplot gnplt/test_t.plt
         echo "Vous pouvez retrouver le graphique dans le dossier images !"
         ;;
