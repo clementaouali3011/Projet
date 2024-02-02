@@ -337,11 +337,6 @@ void SauvegarderResultats(const char *fichier, const StatsVille *topEcartsDistan
     fclose(f);
 }
 
-// Fonction pour obtenir le temps actuel en secondes
-double obtenirTempsActuel() {
-    return (double)clock() / CLOCKS_PER_SEC;
-}
-
 
 int main() {
     
