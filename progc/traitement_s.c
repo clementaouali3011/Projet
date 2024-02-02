@@ -4,7 +4,7 @@
 #include <locale.h>
 #include <math.h>
 #include <unistd.h>
-
+#include <time.h>
 
 
 // Structure pour stocker les statistiques sur une ville dans l'AVL
@@ -60,7 +60,8 @@ NoeudAVL *rotationdroite(NoeudAVL *y) {
 // Fonction pour effectuer une rotation à gauche
 NoeudAVL *rotationgauche(NoeudAVL *x) {
     if (x == NULL || x->droite == NULL) {
-        return x;  // Rien à faire s'il n'y a pas de sous-arbre droit
+        // Rien à faire s'il n'y a pas de sous-arbre droit
+        return x;  
     }
     NoeudAVL *y = x->droite;
     NoeudAVL *T2 = y->gauche;
@@ -147,7 +148,7 @@ NoeudAVL *insererAVL(NoeudAVL *noeud, int routeID, double distance) {
             fprintf(stderr, "Erreur d'allocation de mémoire pour routeIDs.\n");
             exit(EXIT_FAILURE);
         }
-        nouveaunoeud->stats.tailleTabDistances = 1;  // Initialize tailleTabDistances to 1
+        nouveaunoeud->stats.tailleTabDistances = 1; 
         nouveaunoeud->stats.Distances[0] = distance;        
         nouveaunoeud->stats.DistanceMax = distance;
         nouveaunoeud->stats.DistanceMin = distance;
@@ -198,7 +199,6 @@ NoeudAVL *insererAVL(NoeudAVL *noeud, int routeID, double distance) {
 
 // Fonction de recherche dans un AVL
 NoeudAVL *rechercheAVL(NoeudAVL *noeud, int routeID) {
-    // Parcours récursif de l'arbre
     if (noeud == NULL){
         return NULL;
     }
@@ -233,7 +233,7 @@ void Distance (NoeudAVL **avl, const char *ligne){
                 exit(EXIT_FAILURE);
             }
             existenoeud->stats.Distances[existenoeud->stats.tailleTabDistances] = distance;
-            existenoeud->stats.tailleTabDistances++; // Increment tailleTabDistances
+            existenoeud->stats.tailleTabDistances++;
             MajDistanceMAX (existenoeud);
             MajDistanceMIN (existenoeud);
             MajDistanceMOY (existenoeud);
@@ -244,6 +244,7 @@ void Distance (NoeudAVL **avl, const char *ligne){
     }
 }
 
+// Fonction qui va lancer la procédure du traitement
 void procedure(FILE *fichier, NoeudAVL **avl) {
     setlocale(LC_ALL, "");
 
@@ -291,7 +292,7 @@ void afficherTopsDistances(StatsVille topVilles[], int compteur) {
         printf("route n°%d : %g distance max, %g distance min, %g distance moyenne, %g écart maxmin\n",
         topVilles[i].routeID, topVilles[i].DistanceMax, topVilles[i].DistanceMin, topVilles[i].DistanceMoy, (topVilles[i].DistanceMax - topVilles[i].DistanceMin));
 
-
+        
     }
     printf("\n");
 }
