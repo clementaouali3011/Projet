@@ -275,7 +275,6 @@ void afficherTopVilles(StatsVille TopVilles[], int compteur) {
 void Departs(NoeudAVL **avl, const char *ligne) {
     int stepID;
     char villeA[256];
-
     if (sscanf(ligne, "%*d;%d;%255[^;];%*[^;];%*f;%*[^;\n]", &stepID, villeA) == 2) {
         if (stepID==1){
             NoeudAVL *existenoeud = rechercheAVL(*avl, villeA);
@@ -284,7 +283,7 @@ void Departs(NoeudAVL **avl, const char *ligne) {
                 *avl = insererAVLDeparts(*avl, villeA);
             } else {
                 // Ville existante, incrémenter le compteur de départs
-                existenoeud->stats.NbDeparts++;
+                existenoeud->stats.NbDeparts = existenoeud->stats.NbDeparts + 1;
             }
         }
      

@@ -1,6 +1,6 @@
 # Makefile
 
-CC = gcc -fsanitize=address
+CC = gcc
 CFLAGS = -Wall -Wextra -g -O3
 LDFLAGS =
 LDLIBS =

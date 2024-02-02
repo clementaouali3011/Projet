@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Compile les programmes C puis revient dans le dossier du projet
+#Compile les programmes C s'ils existent puis revient dans le dossier du projet
 cd progc/
 make
 cd ../
@@ -76,6 +76,9 @@ for option in "$@"; do
         -l : afficher les 10 trajets les plus longs.
         -t : afficher les 10 villes les plus traversées.
         -s : afficher les statistiques sur les étapes."
+        ;;
+    "$fichier")
+        echo "Vous allez utiliser ce fichier: $fichier."
         ;;
     *)
         echo "Erreur: Option $option inconnue."
