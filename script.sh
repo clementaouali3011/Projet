@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Compile les programmes C puis revenir dans le dossier du projet
+#Compile les programmes C puis revient dans le dossier du projet
 cd progc/
 make
 cd ../
