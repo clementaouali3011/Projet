@@ -37,7 +37,8 @@ fichier="$1"
 option="$2"
 
 # Exécute une commande selon l'argument entré
-case "$option" in
+for option in "$@"; do
+ case "$option" in
     "-d1")
         echo "Option -d1 selected for file $fichier"
         time LC_ALL=C sort -k6 -t";" -d data/data.csv | LC_ALL=C cut --fields=1,6 -d ';' | LC_ALL=C mawk -F"," '!_[$1]++' | tr ';' ' ' | LC_ALL=C cut --fields=2,3 -d ' ' | uniq -c | LC_ALL=C mawk '{print $2 " " $3 ";" $1}' | LC_ALL=C sort -k2 -t";" -nr | head -10 > temp/res_d1.dat
@@ -81,4 +82,5 @@ case "$option" in
         echo "Tuto: $0 <file> <option>"
         exit 1
         ;;
-esac
+ esac
+done
